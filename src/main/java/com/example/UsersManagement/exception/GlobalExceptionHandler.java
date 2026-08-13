@@ -8,11 +8,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
     private final SlackNotifier slackNotifier;
 
     public GlobalExceptionHandler(SlackNotifier notifier){
         this.slackNotifier=notifier;
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleException(Exception ex){
+        String exceptionMessage= "Exception from Raheeq's app: "+ex.getMessage();
+
+        slackNotifier.send(exceptionMessage);
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(exceptionMessage);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -34,5 +43,4 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(exceptionMessage);
     }
-
 }

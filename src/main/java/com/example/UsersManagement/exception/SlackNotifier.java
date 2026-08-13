@@ -8,7 +8,6 @@ import java.util.Map;
 
 @Component
 public class SlackNotifier {
-
     private RestClient restClient;
     private final String webhookURL;
 

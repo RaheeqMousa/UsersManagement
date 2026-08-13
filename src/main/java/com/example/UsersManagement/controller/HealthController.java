@@ -11,10 +11,7 @@ import java.util.Map;
 public class HealthController {
 
     @GetMapping("/health")
-    public ResponseEntity<Map<String,String>> healthCheck(){
-        Map<String,String> res=new HashMap<>();
-        res.put("status","up");
-        res.put("message","The app is running");
-        return ResponseEntity.ok(res);
+    public ResponseEntity<Void> healthCheck(){
+        return ResponseEntity.ok().build();
     }
 }

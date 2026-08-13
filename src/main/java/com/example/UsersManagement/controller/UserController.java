@@ -4,6 +4,8 @@ import com.example.UsersManagement.DTO.UserPatchDTO;
 import com.example.UsersManagement.DTO.UserRequestDTO;
 import com.example.UsersManagement.DTO.UserResponseDTO;
 import com.example.UsersManagement.entity.User;
+import com.example.UsersManagement.mapper.UserMapper;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,54 +19,58 @@ import java.util.Map;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/users")
 public class UserController {
 
+    private UserMapper userMapper;
     private UserService userService;
-    public UserController(UserService uc){
-        this.userService=uc;
+
+    public UserController(UserService uc, UserMapper mapper) {
+        this.userService = uc;
+        this.userMapper = mapper;
     }
 
-    @GetMapping("users/exist")
-    public Map<String,Boolean> usersExist(){
-        return Map.of(
-                "exist",
-                userService.hasUsers()
-        );
+    @GetMapping(value="", params = "!id")
+    public List<UserResponseDTO> getUsers(@RequestParam(required = false) String firstName,
+          @RequestParam(required = false) String lastName,
+          @RequestParam(required = false) String phoneNumber) {
+        List<User> users = userService.getUsers(
+                firstName,
+                lastName,
+                phoneNumber);
+
+        return users.stream()
+                .map(userMapper::toResponse)
+                .toList();
     }
 
-    @GetMapping("users")
-    public List<UserResponseDTO> getAll(){
-        return userService.getAll();
+    @GetMapping(value="", params = "id")
+    public UserResponseDTO getById(@RequestParam Long id) {
+        User user = userService.getById(id);
+        return userMapper.toResponse(user);
     }
 
-    @GetMapping("users/{id}")
-    public UserResponseDTO getById(@PathVariable Long id){
-        return userService.getById(id);
+    @PostMapping("")
+    public UserResponseDTO addUsers(@RequestBody UserRequestDTO request) {
+        User addedUser = userService.addUser(request);
+        return userMapper.toResponse(addedUser);
     }
 
-    @GetMapping("users/phone/{phone_number}")
-    public UserResponseDTO getByPhone(@PathVariable String phone_number){
-        return userService.getByPhoneNumber(phone_number);
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable Long id) {
+        userService.deleteById(id);
     }
 
-    @PostMapping("users")
-    public UserResponseDTO addUsers(@RequestBody UserRequestDTO request){
-        return userService.addUser(request);
+    @PutMapping("/{id}")
+    public UserResponseDTO updateUser(@PathVariable Long id, @RequestBody UserRequestDTO req) {
+        User updatedUser = userService.updateUser(id, req);
+        return userMapper.toResponse(updatedUser);
     }
 
-    @DeleteMapping("users/{id}")
-    public UserResponseDTO deleteById(@PathVariable Long id){
-        return userService.deleteById(id);
-    }
-
-    @PutMapping("users/{id}")
-    public UserResponseDTO updateUser(@PathVariable Long id, @RequestBody UserRequestDTO req){
-        return userService.updateUser(id,req);
-    }
-
-    @PatchMapping("users/{id}")
-    public UserResponseDTO updatePartOfUser(@PathVariable Long id, @RequestBody UserPatchDTO req){
-        return userService.updatePartOfUser(id,req);
+    @PatchMapping("/{id}")
+    public UserResponseDTO updatePartOfUser(@PathVariable Long id, @RequestBody UserPatchDTO req) {
+        User updatedUser = userService.updatePartOfUser(id, req);
+        return userMapper.toResponse(updatedUser);
     }
 
 }
