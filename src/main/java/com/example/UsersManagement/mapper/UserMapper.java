@@ -16,15 +16,16 @@ public class UserMapper {
                 .phoneNumber(dto.phoneNumber()).build();
 
         List<Address> addresses = dto.addresses().stream()
-                .map( address ->
-                    Address.builder()
-                            .longitude(35.217040)
-                            .latitude(31.923798)
-                            .city("Ramallah")
-                            .street("Al-Irsal")
-                            .user(user)
-                            .build()
-                ).toList();
+                .map(address ->
+                        Address.builder()
+                                .longitude(address.longitude())
+                                .latitude(address.latitude())
+                                .city(address.city())
+                                .street(address.street())
+                                .user(user)
+                                .build()
+                )
+                .toList();
         user.setAddresses(addresses);
         return user;
     }
