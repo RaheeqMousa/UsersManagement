@@ -5,6 +5,8 @@ import com.example.UsersManagement.DTO.UserRequestDTO;
 import com.example.UsersManagement.DTO.UserResponseDTO;
 import com.example.UsersManagement.entity.User;
 import com.example.UsersManagement.mapper.UserMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,17 +33,18 @@ public class UserController {
     }
 
     @GetMapping(value="", params = "!id")
-    public List<UserResponseDTO> getUsers(@RequestParam(required = false) String firstName,
-          @RequestParam(required = false) String lastName,
-          @RequestParam(required = false) String phoneNumber) {
-        List<User> users = userService.getUsers(
+    public Page<UserResponseDTO> getUsers(@RequestParam(required = false) String firstName,
+                                          @RequestParam(required = false) String lastName,
+                                          @RequestParam(required = false) String phoneNumber,
+                                          Pageable pageable) {
+        Page<User> users = userService.getUsers(
                 firstName,
                 lastName,
-                phoneNumber);
+                phoneNumber,
+                pageable
+        );
 
-        return users.stream()
-                .map(userMapper::toResponse)
-                .toList();
+        return users.map(userMapper::toResponse);
     }
 
     @GetMapping(value="", params = "id")

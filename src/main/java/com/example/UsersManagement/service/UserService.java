@@ -9,6 +9,8 @@ import com.example.UsersManagement.exception.UserAlreadyExistException;
 import com.example.UsersManagement.exception.UserNotFoundException;
 import com.example.UsersManagement.mapper.UserMapper;
 import com.example.UsersManagement.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -41,10 +43,18 @@ public class UserService {
         return userRepository.save(us);
     }
 
-    public List<User> getUsers(String firstName, String lastName, String phoneNumber) {
-        List<User> users;
-        users= userRepository.getUsers(firstName, lastName, phoneNumber);
-        return users;
+    public Page<User> getUsers(
+            String firstName,
+            String lastName,
+            String phoneNumber,
+            Pageable pageable
+    ) {
+        return userRepository.getUsers(
+                firstName,
+                lastName,
+                phoneNumber,
+                pageable
+        );
     }
 
     public void deleteById(Long id) {
