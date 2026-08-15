@@ -9,7 +9,11 @@ import com.example.UsersManagement.exception.UserAlreadyExistException;
 import com.example.UsersManagement.exception.UserNotFoundException;
 import com.example.UsersManagement.mapper.UserMapper;
 import com.example.UsersManagement.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,10 +45,23 @@ public class UserService {
         return userRepository.save(us);
     }
 
-    public List<User> getUsers(String firstName, String lastName, String phoneNumber) {
-        List<User> users;
-        users= userRepository.getUsers(firstName, lastName, phoneNumber);
-        return users;
+    public Page<User> getUsers(int page, int size) {
+        List<User> users= userRepository.findByDeletedFalse();
+        int from=size*page;
+        if(from>=users.size()){
+            return new PageImpl<>(
+                    List.of(),
+                    PageRequest.of(page, size),
+                    users.size()
+            );
+        }
+        int to= Math.min(users.size(), from+size);
+        List<User> content= users.subList(from,to);
+        return new PageImpl<>(
+                content,
+                PageRequest.of(page, size),
+                users.size()
+        );
     }
 
     public void deleteById(Long id) {

@@ -1,5 +1,6 @@
 package com.example.UsersManagement.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.AnyDiscriminatorImplicitValues;
@@ -23,6 +24,7 @@ public class Address {
     private String city;
     private String street;
 
+    @JsonIgnore
     @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name="user_id",nullable = false)
     private User user;

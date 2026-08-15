@@ -12,7 +12,8 @@ public class SlackNotifier {
     private final String webhookURL;
 
     public SlackNotifier(
-                         @Value("${slack.webhook-url}") String url){
+                         @Value("${slack.webhook-url}")
+                        String url){
         this.restClient = RestClient.builder().build();
         this.webhookURL=url;
     }

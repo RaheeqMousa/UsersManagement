@@ -5,6 +5,8 @@ import com.example.UsersManagement.DTO.UserRequestDTO;
 import com.example.UsersManagement.DTO.UserResponseDTO;
 import com.example.UsersManagement.entity.User;
 import com.example.UsersManagement.mapper.UserMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import com.example.UsersManagement.service.UserService;
 import org.springframework.web.server.ResponseStatusException;
-
+import org.springframework.data.domain.Pageable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,17 +33,11 @@ public class UserController {
     }
 
     @GetMapping(value="", params = "!id")
-    public List<UserResponseDTO> getUsers(@RequestParam(required = false) String firstName,
-          @RequestParam(required = false) String lastName,
-          @RequestParam(required = false) String phoneNumber) {
-        List<User> users = userService.getUsers(
-                firstName,
-                lastName,
-                phoneNumber);
-
-        return users.stream()
-                .map(userMapper::toResponse)
-                .toList();
+    public Page<User> getUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return userService.getUsers(page, size);
     }
 
     @GetMapping(value="", params = "id")
