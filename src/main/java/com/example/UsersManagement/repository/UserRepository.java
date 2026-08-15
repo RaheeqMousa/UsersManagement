@@ -1,6 +1,8 @@
 package com.example.UsersManagement.repository;
 
 import com.example.UsersManagement.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -10,10 +12,25 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
+public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByPhoneNumberAndDeletedFalse(String phoneNumber);
 
     Optional<User> findByIdAndDeletedFalse(Long id);
-
+    @Query(
+            value = """
+select * from "user"
+where deleted=false
+and (:firstName is null or first_name =:firstName)
+and (:lastName is null or last_name =:lastName)
+and (:phoneNumber is null or phone_number =:phoneNumber)
+""",
+            nativeQuery = true
+    ) //value returns the actual data retruned from pagination, countQuery  counts all records matching the same filters
+    Page<User> getUsers(
+            @Param("firstName") String firstName,
+            @Param("lastName") String lastName,
+            @Param("phoneNumber") String phoneNumber,
+            Pageable pageable
+    );
 }
