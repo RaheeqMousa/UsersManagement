@@ -17,16 +17,17 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByPhoneNumberAndDeletedFalse(String phoneNumber);
 
     Optional<User> findByIdAndDeletedFalse(Long id);
+
     @Query(
             value = """
-select * from "user"
-where deleted=false
-and (:firstName is null or first_name =:firstName)
-and (:lastName is null or last_name =:lastName)
-and (:phoneNumber is null or phone_number =:phoneNumber)
-""",
+                    select * from "user"
+                    where deleted=false
+                    and (:firstName is null or first_name =:firstName)
+                    and (:lastName is null or last_name =:lastName)
+                    and (:phoneNumber is null or phone_number =:phoneNumber)
+                    """,
             nativeQuery = true
-    ) //value returns the actual data retruned from pagination, countQuery  counts all records matching the same filters
+    )
     Page<User> getUsers(
             @Param("firstName") String firstName,
             @Param("lastName") String lastName,
