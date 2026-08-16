@@ -48,8 +48,8 @@ public class UserController {
     }
 
     @PostMapping("users")
-    public UserResponseDTO addUsers(@RequestBody UserRequestDTO request){
-        return userService.addUser(request);
+    public UserResponseDTO createUser(@RequestBody UserRequestDTO request){
+        return userService.createUser(request);
     }
 
     @DeleteMapping("users/{id}")

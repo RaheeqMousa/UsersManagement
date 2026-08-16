@@ -41,11 +41,11 @@ public class UserService {
         return userMapper.toResponse(user.get());
     }
 
-    public UserResponseDTO addUser(UserRequestDTO u){
-        User us= userMapper.toEntity(u);
+    public UserResponseDTO createUser(UserRequestDTO u){
         if(!userRepository.findByPhoneNumber(u.phoneNumber()).isEmpty())
             throw new UserAlreadyExistException("Add User - User with this phone number already exist");
-        User addedUser= userRepository.save(us);
+        User userEntity= userMapper.toEntity(u);
+        User addedUser= userRepository.save(userEntity);
         return userMapper.toResponse(addedUser);
     }
 
@@ -55,26 +55,26 @@ public class UserService {
     }
 
     public UserResponseDTO getByPhoneNumber(String n){
-        Optional<User> us=userRepository.findByPhoneNumber(n);
+        Optional<User> userOptional=userRepository.findByPhoneNumber(n);
 
-        if (us.isEmpty()) {
+        if (userOptional.isEmpty()) {
             throw new UserNotFoundException(
                     "Get By phone number - User with phone number " + n + " not found"
             );
         }else
-            return userMapper.toResponse(us.get());
+            return userMapper.toResponse(userOptional.get());
     }
 
     public UserResponseDTO deleteById(Long id) {
-        Optional<User> optionalUser = userRepository.findById(id);
+        Optional<User> userOptional = userRepository.findById(id);
 
-        if (optionalUser.isEmpty()) {
+        if (userOptional.isEmpty()) {
             throw new UserNotFoundException(
                     "Delete By ID - User with ID " + id + " not found"
             );
         }
 
-        User user = optionalUser.get();
+        User user = userOptional.get();
         UserResponseDTO response = userMapper.toResponse(user);
         userRepository.delete(user);
 
@@ -83,15 +83,15 @@ public class UserService {
 
     public UserResponseDTO updateUser(Long id, UserRequestDTO userReq) {
 
-        Optional<User> us = userRepository.findById(id);
+        Optional<User> userOptional = userRepository.findById(id);
 
-        if (us.isEmpty()) {
+        if (userOptional.isEmpty()) {
             throw new UserNotFoundException(
                     "Update User - User not found"
             );
         }
 
-        User user = us.get();
+        User user = userOptional.get();
 
         Optional<User> existingUser =
                 userRepository.findByPhoneNumber(userReq.phoneNumber());
@@ -115,11 +115,11 @@ public class UserService {
     }
 
     public UserResponseDTO updatePartOfUser(Long id, UserPatchDTO userReq){
-        Optional<User> us= userRepository.findById(id);
-        if(us.isEmpty()){
+        Optional<User> userOptional= userRepository.findById(id);
+        if(userOptional.isEmpty()){
             throw new UserNotFoundException("Update user - User not found");
         }else{
-            User user=us.get();
+            User user=userOptional.get();
             if(userReq.phoneNumber()!=null) {
                 Optional<User> existingUser =
                         userRepository.findByPhoneNumber(userReq.phoneNumber());
