@@ -33,10 +33,10 @@ public class UserController {
     }
 
     @GetMapping(value="", params = "!id")
-    public Page<User> getUsers(
+    public Page<UserResponseDTO> getUsers(
             Pageable pageable
     ) {
-        return userService.getUsers(pageable);
+        return userService.getUsers(pageable).map(userMapper::toResponse);
     }
 
     @GetMapping(value="", params = "id")

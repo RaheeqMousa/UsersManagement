@@ -15,14 +15,10 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @EntityGraph(attributePaths = {"addresses"})
     Optional<User> findByPhoneNumberAndDeletedFalse(String phoneNumber);
 
     @EntityGraph(attributePaths = {"addresses"})
     Optional<User> findByIdAndDeletedFalse(Long id);
-
-    @EntityGraph(attributePaths = {"addresses"})
-    List<User> findByDeletedFalse();
 
     @EntityGraph(attributePaths = {"addresses"})
     Page<User> findByDeletedFalse(Pageable pageable);
