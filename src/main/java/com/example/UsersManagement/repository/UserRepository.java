@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
         and (:phoneNumber is null or u.phoneNumber = :phoneNumber)
         and u.deleted = false
         """)
-    Page<User> getUsers(@Param("firstName") String firstName,
+    Page<User> getUsersJPQL(@Param("firstName") String firstName,
                         @Param("lastName") String lastName,
                         @Param("phoneNumber") String phoneNumber,
                         Pageable pageable);

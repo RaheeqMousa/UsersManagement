@@ -32,12 +32,12 @@ public class UserController {
         this.userMapper = mapper;
     }
 
-    @GetMapping(value="", params = "!id")
+    @GetMapping(value="/JPQL", params = "!id")
     public Page<UserResponseDTO> getUsers(@RequestParam(required = false) String firstName,
                                           @RequestParam(required = false) String lastName,
                                           @RequestParam(required = false) String phoneNumber,
                                           Pageable pageable) {
-        Page<User> users = userService.getUsers(
+        Page<User> users = userService.getUsersJPQL(
                 firstName,
                 lastName,
                 phoneNumber,

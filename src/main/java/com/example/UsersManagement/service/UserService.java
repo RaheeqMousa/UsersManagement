@@ -9,6 +9,7 @@ import com.example.UsersManagement.exception.UserAlreadyExistException;
 import com.example.UsersManagement.exception.UserNotFoundException;
 import com.example.UsersManagement.mapper.UserMapper;
 import com.example.UsersManagement.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class UserService {
         this.userMapper = mapper;
     }
 
+    @Transactional(readOnly = true)
     public User getById(Long id) {
         //Optional<User> means that the result might contain a user or may be empty
         Optional<User> user = userRepository.findByIdAndDeletedFalse(id);
@@ -37,18 +39,19 @@ public class UserService {
     }
 
     public User addUser(UserRequestDTO u) {
-        User us = userMapper.toEntity(u);
         if (!userRepository.findByPhoneNumberAndDeletedFalse(u.phoneNumber()).isEmpty())
             throw new UserAlreadyExistException("Add User - User with this phone number already exist");
+        User us = userMapper.toEntity(u);
         return userRepository.save(us);
     }
 
-    public Page<User> getUsers(String firstName, String lastName, String phoneNumber, Pageable pageable) {
+    public Page<User> getUsersJPQL(String firstName, String lastName, String phoneNumber, Pageable pageable) {
         Page<User> users;
-        users= userRepository.getUsers(firstName, lastName, phoneNumber, pageable);
+        users= userRepository.getUsersJPQL(firstName, lastName, phoneNumber, pageable);
         return users;
     }
 
+    @Transactional
     public void deleteById(Long id) {
         Optional<User> optionalUser = userRepository.findByIdAndDeletedFalse(id);
 
@@ -63,6 +66,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     public User updateUser(Long id, UserRequestDTO userReq) {
 
         Optional<User> us = userRepository.findByIdAndDeletedFalse(id);
@@ -102,6 +106,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public User updatePartOfUser(Long id, UserPatchDTO userReq) {
         Optional<User> us = userRepository.findByIdAndDeletedFalse(id);
         if (us.isEmpty()) {
