@@ -44,6 +44,11 @@ public class UserService {
     }
 
     public Page<User> getUsers(String firstName, String lastName, String phoneNumber, Pageable pageable) {
+        if(pageable.getPageSize()>20){
+            throw new IllegalArgumentException(
+                    "Page size cannot be greater than 20"
+            );
+        }
         Page<User> users;
         users= userRepository.getUsers(firstName, lastName, phoneNumber, pageable);
         return users;

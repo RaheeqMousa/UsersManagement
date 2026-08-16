@@ -2,6 +2,7 @@ package com.example.UsersManagement.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 
 import java.util.List;
 
@@ -34,6 +35,7 @@ public class User {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @BatchSize(size = 20)
     private List<Address> addresses;
 
     @Override

@@ -26,6 +26,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     and (:lastName is null or last_name =:lastName)
                     and (:phoneNumber is null or phone_number =:phoneNumber)
                     """,
+            countQuery= """
+                    select count(*)
+                    from "user"
+                    where deleted=false
+                    and (:firstName is null or first_name =:firstName)
+                    and (:lastName is null or last_name =:lastName)
+                    and (:phoneNumber is null or phone_number =:phoneNumber)
+                    """,
             nativeQuery = true
     )
     Page<User> getUsers(
