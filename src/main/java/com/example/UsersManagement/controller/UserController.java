@@ -32,23 +32,24 @@ public class UserController {
         this.userMapper = mapper;
     }
 
-    @GetMapping(value="", params = "!id")
+    @GetMapping
     public Page<UserResponseDTO> getUsers(
             Pageable pageable
     ) {
         return userService.getUsers(pageable).map(userMapper::toResponse);
     }
 
-    @GetMapping(value="", params = "id")
-    public UserResponseDTO getById(@RequestParam Long id) {
+    @GetMapping(value="/{id}")
+    public UserResponseDTO getById(@PathVariable Long id) {
         User user = userService.getById(id);
         return userMapper.toResponse(user);
     }
 
-    @PostMapping("")
-    public UserResponseDTO addUsers(@RequestBody UserRequestDTO request) {
-        User addedUser = userService.addUser(request);
-        return userMapper.toResponse(addedUser);
+    @PostMapping
+    public UserResponseDTO createUser(@RequestBody UserRequestDTO request){
+        User user = userMapper.toEntity(request);
+        User createdUser= userService.createUser(user);
+        return userMapper.toResponse(createdUser);
     }
 
     @DeleteMapping("/{id}")
@@ -58,13 +59,15 @@ public class UserController {
 
     @PutMapping("/{id}")
     public UserResponseDTO updateUser(@PathVariable Long id, @RequestBody UserRequestDTO req) {
-        User updatedUser = userService.updateUser(id, req);
+        User userToUpdate=userMapper.toEntity(req);
+        User updatedUser = userService.updateUser(id, userToUpdate);
         return userMapper.toResponse(updatedUser);
     }
 
     @PatchMapping("/{id}")
     public UserResponseDTO updatePartOfUser(@PathVariable Long id, @RequestBody UserPatchDTO req) {
-        User updatedUser = userService.updatePartOfUser(id, req);
+        User userToUpdate=userMapper.toEntity(req);
+        User updatedUser = userService.updatePartOfUser(id, userToUpdate);
         return userMapper.toResponse(updatedUser);
     }
 

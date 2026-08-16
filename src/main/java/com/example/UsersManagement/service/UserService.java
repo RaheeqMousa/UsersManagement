@@ -38,11 +38,10 @@ public class UserService {
         return user.get();
     }
 
-    public User addUser(UserRequestDTO u) {
-        User us = userMapper.toEntity(u);
-        if (!userRepository.findByPhoneNumberAndDeletedFalse(u.phoneNumber()).isEmpty())
+    public User createUser(User user) {
+        if (!userRepository.findByPhoneNumberAndDeletedFalse(user.getPhoneNumber()).isEmpty())
             throw new UserAlreadyExistException("Add User - User with this phone number already exist");
-        return userRepository.save(us);
+        return userRepository.save(user);
     }
 
     public Page<User> getUsers(Pageable pageable) {
@@ -51,31 +50,30 @@ public class UserService {
     }
 
     public void deleteById(Long id) {
-        Optional<User> optionalUser = userRepository.findByIdAndDeletedFalse(id);
+        Optional<User> userOptional = userRepository.findByIdAndDeletedFalse(id);
 
-        if (optionalUser.isEmpty()) {
+        if (userOptional.isEmpty()) {
             throw new UserNotFoundException(
                     "Delete By ID - User with ID " + id + " not found"
             );
         }
 
-        User user = optionalUser.get();
+        User user = userOptional.get();
         user.setDeleted(true);
         userRepository.save(user);
     }
 
-    public User updateUser(Long id, UserRequestDTO userReq) {
+    public User updateUser(Long id, User userReq) {
+        Optional<User> userOptional = userRepository.findByIdAndDeletedFalse(id);
 
-        Optional<User> us = userRepository.findByIdAndDeletedFalse(id);
-
-        if (us.isEmpty()) {
+        if (userOptional.isEmpty()) {
             throw new UserNotFoundException(
                     "Update User - User not found"
             );
         }
 
-        User user = us.get();
-        Optional<User> existingUser = userRepository.findByPhoneNumberAndDeletedFalse(userReq.phoneNumber());
+        User user = userOptional.get();
+        Optional<User> existingUser = userRepository.findByPhoneNumberAndDeletedFalse(userReq.getPhoneNumber());
 
         if (existingUser.isPresent() && !existingUser.get().getId().equals(id)) {
 
@@ -85,33 +83,33 @@ public class UserService {
         }
 
         user.getAddresses().clear();
-        for(AddressRequestDTO req: userReq.addresses()){
+        for(Address req: userReq.getAddresses()){
             Address address= Address.builder()
-                    .longitude(req.longitude())
-                    .latitude(req.latitude())
-                    .city(req.city())
-                    .street(req.street())
+                    .longitude(req.getLongitude())
+                    .latitude(req.getLatitude())
+                    .city(req.getCity())
+                    .street(req.getStreet())
                     .user(user)
                     .build();
             user.getAddresses().add(address);
         }
 
-        user.setLastName(userReq.lastName());
-        user.setFirstName(userReq.firstName());
-        user.setPhoneNumber(userReq.phoneNumber());
+        user.setLastName(userReq.getLastName());
+        user.setFirstName(userReq.getFirstName());
+        user.setPhoneNumber(userReq.getPhoneNumber());
 
         return userRepository.save(user);
     }
 
-    public User updatePartOfUser(Long id, UserPatchDTO userReq) {
-        Optional<User> us = userRepository.findByIdAndDeletedFalse(id);
-        if (us.isEmpty()) {
+    public User updatePartOfUser(Long id, User userReq) {
+        Optional<User> userOptional = userRepository.findByIdAndDeletedFalse(id);
+        if (userOptional.isEmpty()) {
             throw new UserNotFoundException("Update user - User not found");
         }
-        User user = us.get();
-        if (userReq.phoneNumber() != null) {
+        User user = userOptional.get();
+        if (userReq.getPhoneNumber() != null) {
             Optional<User> existingUser =
-                    userRepository.findByPhoneNumberAndDeletedFalse(userReq.phoneNumber());
+                    userRepository.findByPhoneNumberAndDeletedFalse(userReq.getPhoneNumber());
 
             if (existingUser.isPresent() && !existingUser.get().getId().equals(id)) {
                 throw new UserAlreadyExistException(
@@ -119,24 +117,24 @@ public class UserService {
                 );
             }
 
-            user.setPhoneNumber(userReq.phoneNumber());
+            user.setPhoneNumber(userReq.getPhoneNumber());
         }
-        if (userReq.addresses() != null) {
+        if (userReq.getAddresses() != null) {
             user.getAddresses().clear();
-            for(AddressRequestDTO req: userReq.addresses()){
+            for(Address req: userReq.getAddresses()){
                 Address address= Address.builder()
-                        .longitude(req.longitude())
-                        .latitude(req.latitude())
-                        .city(req.city())
-                        .street(req.street())
+                        .longitude(req.getLongitude())
+                        .latitude(req.getLatitude())
+                        .city(req.getCity())
+                        .street(req.getStreet())
                         .user(user)
                         .build();
                 user.getAddresses().add(address);
             }
-        }if (userReq.lastName() != null)
-            user.setLastName(userReq.lastName());
-        if (userReq.firstName() != null)
-            user.setFirstName(userReq.firstName());
+        }if (userReq.getLastName() != null)
+            user.setLastName(userReq.getLastName());
+        if (userReq.getFirstName() != null)
+            user.setFirstName(userReq.getFirstName());
         return userRepository.save(user); //return the user object after it is updated
     }
 
