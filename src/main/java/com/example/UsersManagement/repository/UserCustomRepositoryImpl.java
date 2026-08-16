@@ -15,9 +15,8 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
-
 @Repository
-public class UserRepositoryCustomImpl implements UserRepositoryCustom{
+public class UserCustomRepositoryImpl implements UserCustomRepository {
     @PersistenceContext
     private EntityManager entityManager;
 
