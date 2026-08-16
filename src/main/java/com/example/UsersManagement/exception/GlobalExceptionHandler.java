@@ -6,6 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     private final SlackNotifier slackNotifier;
@@ -16,7 +19,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleException(Exception ex){
-        String exceptionMessage= "Exception from Raheeq's app: "+ex.getMessage();
+        String exceptionMessage= "Exception from Raheeq's app: "+ex.getMessage()+
+                                    "\nException Stack Trace\n"+exceptionStackTrace(ex);
 
         slackNotifier.send(exceptionMessage);
         return ResponseEntity
@@ -26,7 +30,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<String> handleUserNotFound(UserNotFoundException ex){
-        String exceptionMessage= "Exception from Raheeq's app: "+ex.getMessage();
+        String exceptionMessage= "Exception from Raheeq's app: "+ex.getMessage()+
+                                    "\nException Stack Trace\n"+exceptionStackTrace(ex);
 
         slackNotifier.send(exceptionMessage);
         return ResponseEntity
@@ -36,11 +41,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserAlreadyExistException.class)
     public ResponseEntity<String> handleUserAlreadyExist(UserAlreadyExistException ex){
-        String exceptionMessage= "Exception from Raheeq's app: "+ex.getMessage();
+        String exceptionMessage= "Exception from Raheeq's app: "+ex.getMessage()+
+                                    "\nException Stack Trace\n"+exceptionStackTrace(ex);
 
         slackNotifier.send(exceptionMessage);
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(exceptionMessage);
+    }
+
+    private String exceptionStackTrace(Exception exc){
+        String stackTrace = Arrays.stream(exc.getStackTrace())
+                .filter(el -> el.getClassName().startsWith("com.example"))
+                .map(StackTraceElement::toString)
+                .collect(Collectors.joining("\n"));
+        return stackTrace;
     }
 }
