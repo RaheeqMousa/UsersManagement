@@ -49,6 +49,9 @@ public class UserService {
             String phoneNumber,
             Pageable pageable
     ) {
+        if(pageable.getPageSize()>20){
+            throw new IllegalArgumentException("Page size can't be greater than 20");
+        }
         return userRepository.getUsers(
                 firstName,
                 lastName,
