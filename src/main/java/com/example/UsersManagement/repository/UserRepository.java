@@ -23,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @EntityGraph(attributePaths = {"addresses"})
     List<User> findByDeletedFalse();
+
+    @EntityGraph(attributePaths = {"addresses"})
+    Page<User> findByDeletedFalse(Pageable pageable);
 }

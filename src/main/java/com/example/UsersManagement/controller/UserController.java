@@ -34,10 +34,9 @@ public class UserController {
 
     @GetMapping(value="", params = "!id")
     public Page<User> getUsers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            Pageable pageable
     ) {
-        return userService.getUsers(page, size);
+        return userService.getUsers(pageable);
     }
 
     @GetMapping(value="", params = "id")

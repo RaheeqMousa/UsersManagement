@@ -45,23 +45,9 @@ public class UserService {
         return userRepository.save(us);
     }
 
-    public Page<User> getUsers(int page, int size) {
-        List<User> users= userRepository.findByDeletedFalse();
-        int from=size*page;
-        if(from>=users.size()){
-            return new PageImpl<>(
-                    List.of(),
-                    PageRequest.of(page, size),
-                    users.size()
-            );
-        }
-        int to= Math.min(users.size(), from+size);
-        List<User> content= users.subList(from,to);
-        return new PageImpl<>(
-                content,
-                PageRequest.of(page, size),
-                users.size()
-        );
+    public Page<User> getUsers(Pageable pageable) {
+        Page<User> users= userRepository.findByDeletedFalse(pageable);
+        return users;
     }
 
     public void deleteById(Long id) {
