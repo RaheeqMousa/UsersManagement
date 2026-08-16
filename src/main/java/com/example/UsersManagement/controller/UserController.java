@@ -5,7 +5,6 @@ import com.example.UsersManagement.DTO.UserRequestDTO;
 import com.example.UsersManagement.DTO.UserResponseDTO;
 import com.example.UsersManagement.entity.User;
 import com.example.UsersManagement.mapper.UserMapper;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class UserController {
         this.userMapper = mapper;
     }
 
-    @GetMapping(value="", params = "!id")
+    @GetMapping
     public List<UserResponseDTO> getUsers(@RequestParam(required = false) String firstName,
           @RequestParam(required = false) String lastName,
           @RequestParam(required = false) String phoneNumber) {
@@ -44,16 +43,17 @@ public class UserController {
                 .toList();
     }
 
-    @GetMapping(value="", params = "id")
-    public UserResponseDTO getById(@RequestParam Long id) {
+    @GetMapping(value="/{id}")
+    public UserResponseDTO getById(@PathVariable Long id) {
         User user = userService.getById(id);
         return userMapper.toResponse(user);
     }
 
-    @PostMapping("")
-    public UserResponseDTO addUsers(@RequestBody UserRequestDTO request) {
-        User addedUser = userService.addUser(request);
-        return userMapper.toResponse(addedUser);
+    @PostMapping
+    public UserResponseDTO createUser(@RequestBody UserRequestDTO request){
+        User user = userMapper.toEntity(request);
+        User createdUser= userService.createUser(user);
+        return userMapper.toResponse(createdUser);
     }
 
     @DeleteMapping("/{id}")
@@ -63,13 +63,15 @@ public class UserController {
 
     @PutMapping("/{id}")
     public UserResponseDTO updateUser(@PathVariable Long id, @RequestBody UserRequestDTO req) {
-        User updatedUser = userService.updateUser(id, req);
+        User userToUpdate=userMapper.toEntity(req);
+        User updatedUser = userService.updateUser(id, userToUpdate);
         return userMapper.toResponse(updatedUser);
     }
 
     @PatchMapping("/{id}")
     public UserResponseDTO updatePartOfUser(@PathVariable Long id, @RequestBody UserPatchDTO req) {
-        User updatedUser = userService.updatePartOfUser(id, req);
+        User userToUpdate=userMapper.toEntity(req);
+        User updatedUser = userService.updatePartOfUser(id, userToUpdate);
         return userMapper.toResponse(updatedUser);
     }
 
