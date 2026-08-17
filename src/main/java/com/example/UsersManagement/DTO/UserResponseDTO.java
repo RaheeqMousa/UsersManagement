@@ -12,19 +12,5 @@ public record UserResponseDTO(
         String phoneNumber,
         List<AddressResponseDTO> addresses
 ) {
-    public UserResponseDTO(User user) {
-        this(
-                user.getFirstName(),
-                user.getLastName(),
-                user.getPhoneNumber(),
-                user.getAddresses().stream()
-                        .map(address -> new AddressResponseDTO(
-                                address.getLongitude(),
-                                address.getLatitude(),
-                                address.getCity(),
-                                address.getStreet()
-                        )).toList()
-        );
-    }
 
 }

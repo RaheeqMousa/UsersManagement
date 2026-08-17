@@ -36,7 +36,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     """,
             nativeQuery = true
     )
-    Page<User> getUsers(
+    Page<User> getUsersNativeQuery(
             @Param("firstName") String firstName,
             @Param("lastName") String lastName,
             @Param("phoneNumber") String phoneNumber,
