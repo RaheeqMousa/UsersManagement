@@ -21,6 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long>{
     @Query("""
         select u
         from User u
+        left join fetch u.addresses
         where (:firstName is null or u.firstName = :firstName)
         and (:lastName is null or u.lastName = :lastName)
         and (:phoneNumber is null or u.phoneNumber = :phoneNumber)
