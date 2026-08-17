@@ -8,6 +8,7 @@ import com.example.UsersManagement.mapper.UserMapper;
 import com.example.UsersManagement.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
 
@@ -21,6 +22,7 @@ public class UserService {
         this.userMapper = mapper;
     }
 
+    @Transactional(readOnly = true)
     public User getById(Long id) {
         //Optional<User> means that the result might contain a user or may be empty
         Optional<User> user = userRepository.findByIdAndDeletedFalse(id);
@@ -47,6 +49,12 @@ public class UserService {
         }
         Page<User> users;
         users = userRepository.getUsersNativeQuery(firstName, lastName, phoneNumber, pageable);
+        return users;
+    }
+
+    public Page<User> getUsersJPQL(String firstName, String lastName, String phoneNumber, Pageable pageable) {
+        Page<User> users;
+        users= userRepository.getUsersJPQL(firstName, lastName, phoneNumber, pageable);
         return users;
     }
 
@@ -86,6 +94,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
     public User updateUser(Long id, User userReq) {
         Optional<User> userOptional = userRepository.findByIdAndDeletedFalse(id);
 
@@ -124,6 +133,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
     public User updatePartOfUser(Long id, User userReq) {
         Optional<User> userOptional = userRepository.findByIdAndDeletedFalse(id);
         if (userOptional.isEmpty()) {

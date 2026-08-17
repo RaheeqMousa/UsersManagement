@@ -51,11 +51,25 @@ public class UserController {
         return users.map(userMapper::toResponse);
     }
 
-    @GetMapping("")
+    @GetMapping
     public Page<UserResponseDTO> getUsers(
             Pageable pageable
     ) {
         return userService.getUsers(pageable).map(userMapper::toResponse);
+    }
+
+    @GetMapping("/jpql")
+    public Page<UserResponseDTO> getUsersJPQL(@RequestParam(required = false) String firstName,
+                                              @RequestParam(required = false) String lastName,
+                                              @RequestParam(required = false) String phoneNumber,
+                                              Pageable pageable) {
+        Page<User> users = userService.getUsersJPQL(
+                firstName,
+                lastName,
+                phoneNumber,
+                pageable);
+
+        return users.map(userMapper::toResponse);
     }
 
     @GetMapping(value="/{id}")

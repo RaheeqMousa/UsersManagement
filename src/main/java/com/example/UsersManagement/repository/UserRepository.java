@@ -45,4 +45,19 @@ public interface UserRepository extends JpaRepository<User, Long>, UserCustomRep
 
     @EntityGraph(attributePaths = {"addresses"})
     Page<User> findByDeletedFalse(Pageable pageable);
+
+    @Query("""
+        select u
+        from User u
+        left join fetch u.addresses
+        where (:firstName is null or u.firstName = :firstName)
+        and (:lastName is null or u.lastName = :lastName)
+        and (:phoneNumber is null or u.phoneNumber = :phoneNumber)
+        and u.deleted = false
+        """)
+    Page<User> getUsersJPQL(@Param("firstName") String firstName,
+                        @Param("lastName") String lastName,
+                        @Param("phoneNumber") String phoneNumber,
+                        Pageable pageable);
+
 }
