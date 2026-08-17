@@ -3,7 +3,6 @@ package com.example.UsersManagement.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.BatchSize;
-
 import java.util.List;
 
 @Data

@@ -1,7 +1,6 @@
 package com.example.UsersManagement.DTO;
 
 import com.example.UsersManagement.entity.Address;
-import com.example.UsersManagement.entity.User;
 import jakarta.validation.constraints.NotNull;
 
 public record AddressRequestDTO(

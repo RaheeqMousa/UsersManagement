@@ -1,8 +1,5 @@
 package com.example.UsersManagement.service;
 
-import com.example.UsersManagement.DTO.AddressRequestDTO;
-import com.example.UsersManagement.DTO.UserPatchDTO;
-import com.example.UsersManagement.DTO.UserRequestDTO;
 import com.example.UsersManagement.entity.Address;
 import com.example.UsersManagement.entity.User;
 import com.example.UsersManagement.exception.UserAlreadyExistException;
@@ -13,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.Optional;
+
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -42,13 +40,18 @@ public class UserService {
     }
 
     public Page<User> getUsersNativeQuery(String firstName, String lastName, String phoneNumber, Pageable pageable) {
-        if(pageable.getPageSize()>20){
+        if (pageable.getPageSize() > 20) {
             throw new IllegalArgumentException(
                     "Page size cannot be greater than 20"
             );
         }
         Page<User> users;
-        users= userRepository.getUsersNativeQuery(firstName, lastName, phoneNumber, pageable);
+        users = userRepository.getUsersNativeQuery(firstName, lastName, phoneNumber, pageable);
+        return users;
+    }
+
+    public Page<User> getUsers(Pageable pageable) {
+        Page<User> users= userRepository.findByDeletedFalse(pageable);
         return users;
     }
 

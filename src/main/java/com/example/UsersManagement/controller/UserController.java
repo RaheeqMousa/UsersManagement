@@ -7,18 +7,8 @@ import com.example.UsersManagement.entity.User;
 import com.example.UsersManagement.mapper.UserMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 import com.example.UsersManagement.service.UserService;
-import org.springframework.web.server.ResponseStatusException;
-
-import javax.management.Query;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -59,6 +49,13 @@ public class UserController {
         );
 
         return users.map(userMapper::toResponse);
+    }
+
+    @GetMapping("")
+    public Page<UserResponseDTO> getUsers(
+            Pageable pageable
+    ) {
+        return userService.getUsers(pageable).map(userMapper::toResponse);
     }
 
     @GetMapping(value="/{id}")

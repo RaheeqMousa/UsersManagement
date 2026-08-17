@@ -3,7 +3,6 @@ package com.example.UsersManagement.exception;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
-
 import java.util.Map;
 
 @Component
@@ -12,7 +11,8 @@ public class SlackNotifier {
     private final String webhookURL;
 
     public SlackNotifier(
-                         @Value("${slack.webhook-url}") String url){
+                         @Value("${slack.webhook-url}")
+                        String url){
         this.restClient = RestClient.builder().build();
         this.webhookURL=url;
     }

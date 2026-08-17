@@ -7,7 +7,6 @@ import com.example.UsersManagement.DTO.UserResponseDTO;
 import com.example.UsersManagement.entity.Address;
 import com.example.UsersManagement.entity.User;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 
 @Component
