@@ -6,7 +6,7 @@ import com.example.UsersManagement.DTO.UserResponseDTO;
 import com.example.UsersManagement.entity.User;
 import com.example.UsersManagement.mapper.UserMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.UsersManagement.service.UserService;
 import org.springframework.web.server.ResponseStatusException;
 
-import org.springframework.data.domain.Pageable;
+import javax.management.Query;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +32,8 @@ public class UserController {
         this.userMapper = mapper;
     }
 
-    @GetMapping
-    public Page<UserResponseDTO> getUsers(@RequestParam(required = false) String firstName,
+    @GetMapping("/query")
+    public Page<UserResponseDTO> getUsersNativeQuery(@RequestParam(required = false) String firstName,
                                           @RequestParam(required = false) String lastName,
                                           @RequestParam(required = false) String phoneNumber,
                                           Pageable pageable) {
@@ -42,6 +42,21 @@ public class UserController {
                 lastName,
                 phoneNumber,
                 pageable);
+
+        return users.map(userMapper::toResponse);
+    }
+
+    @GetMapping("/criteria")
+    public Page<UserResponseDTO> getUsersCriteria(@RequestParam(required = false) String firstName,
+                                                  @RequestParam(required = false) String lastName,
+                                                  @RequestParam(required = false) String phoneNumber,
+                                                  Pageable pageable) {
+        Page<User> users = userService.getUsersCriteria(
+                firstName,
+                lastName,
+                phoneNumber,
+                pageable
+        );
 
         return users.map(userMapper::toResponse);
     }

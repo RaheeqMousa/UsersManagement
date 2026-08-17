@@ -12,9 +12,7 @@ import com.example.UsersManagement.repository.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import java.util.List;
 import java.util.Optional;
-
 @Service
 public class UserService {
     private final UserRepository userRepository;
@@ -33,6 +31,7 @@ public class UserService {
                     "Get by ID - User with id " + id + " not found"
             );
         }
+
         return user.get();
     }
 
@@ -51,6 +50,23 @@ public class UserService {
         Page<User> users;
         users= userRepository.getUsersNativeQuery(firstName, lastName, phoneNumber, pageable);
         return users;
+    }
+
+    public Page<User> getUsersCriteria(
+            String firstName,
+            String lastName,
+            String phoneNumber,
+            Pageable pageable
+    ) {
+        if(pageable.getPageSize()>20){
+            throw new IllegalArgumentException("Page size can't be greater than 20");
+        }
+        return userRepository.getUsers(
+                firstName,
+                lastName,
+                phoneNumber,
+                pageable
+        );
     }
 
     public void deleteById(Long id) {
