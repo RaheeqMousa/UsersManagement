@@ -33,11 +33,11 @@ public class UserController {
     }
 
     @GetMapping
-    public Page<UserResponseDTO> getUsers(@RequestParam(required = false) String firstName,
+    public Page<UserResponseDTO> getUsersCriteria(@RequestParam(required = false) String firstName,
                                           @RequestParam(required = false) String lastName,
                                           @RequestParam(required = false) String phoneNumber,
                                           Pageable pageable) {
-        Page<User> users = userService.getUsers(
+        Page<User> users = userService.getUsersCriteria(
                 firstName,
                 lastName,
                 phoneNumber,

@@ -27,6 +27,7 @@ public class UserService {
                     "Get by ID - User with id " + id + " not found"
             );
         }
+
         return user.get();
     }
 
@@ -36,7 +37,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public Page<User> getUsers(
+    public Page<User> getUsersCriteria(
             String firstName,
             String lastName,
             String phoneNumber,
