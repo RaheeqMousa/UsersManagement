@@ -35,12 +35,14 @@ public class UserService {
         return user.get();
     }
 
+    @Transactional
     public User createUser(User user) {
         if (!userRepository.findByPhoneNumberAndDeletedFalse(user.getPhoneNumber()).isEmpty())
             throw new UserAlreadyExistException("Add User - User with this phone number already exist");
         return userRepository.save(user);
     }
 
+    @Transactional(readOnly = true)
     public Page<User> getUsersNativeQuery(String firstName, String lastName, String phoneNumber, Pageable pageable) {
         if (pageable.getPageSize() > 20) {
             throw new IllegalArgumentException(
@@ -52,17 +54,20 @@ public class UserService {
         return users;
     }
 
+    @Transactional(readOnly = true)
     public Page<User> getUsersJPQL(String firstName, String lastName, String phoneNumber, Pageable pageable) {
         Page<User> users;
         users= userRepository.getUsersJPQL(firstName, lastName, phoneNumber, pageable);
         return users;
     }
 
+    @Transactional(readOnly = true)
     public Page<User> getUsers(Pageable pageable) {
         Page<User> users= userRepository.findByDeletedFalse(pageable);
         return users;
     }
 
+    @Transactional(readOnly = true)
     public Page<User> getUsersCriteria(
             String firstName,
             String lastName,
@@ -80,6 +85,7 @@ public class UserService {
         );
     }
 
+    @Transactional
     public void deleteById(Long id) {
         Optional<User> userOptional = userRepository.findByIdAndDeletedFalse(id);
 
